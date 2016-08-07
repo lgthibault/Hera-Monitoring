@@ -2,9 +2,9 @@ elasticsearchdata:
   image: elasticsearch:1.6
   command: echo "Starting ElasticSearch Data Container..."
 
-whisper:
-  image: nuancemobility/carbon
-  command: whisper
+#whisper:
+#  image: nuancemobility/carbon
+#  command: whisper
 
 influxdbdata:
   image: influxdb
