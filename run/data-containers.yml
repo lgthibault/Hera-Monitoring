@@ -5,3 +5,7 @@ elasticsearchdata:
 whisper:
   image: nuancemobility/carbon
   command: whisper
+
+influxdbdata:
+  image: influxdb
+  command: echo "Starting InfluxDB Data Container..."

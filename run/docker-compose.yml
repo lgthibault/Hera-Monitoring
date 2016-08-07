@@ -1,40 +1,40 @@
-carbonrelay:
-  image: nuancemobility/carbon
-  command: relay
-  ports:
-   - "2003:2003"
-   - "2004:2004"
-  volumes:
-   - ./carbon/relay:/etc/carbon
-  links:
-   - carboncache1
-   - carboncache2
+# carbonrelay:
+#  image: nuancemobility/carbon
+#  command: relay
+#  ports:
+#   - "2003:2003"
+#   - "2004:2004"
+#  volumes:
+#   - ./carbon/relay:/etc/carbon
+#  links:
+#   - carboncache1
+#   - carboncache2
 
-carboncache1:
-  image: nuancemobility/carbon
-  command: cache
-  volumes:
-   - ./carbon/cache:/etc/carbon
-  volumes_from:
-   - heramonitoring_whisper_1
+# carboncache1:
+#  image: nuancemobility/carbon
+#  command: cache
+#  volumes:
+#   - ./carbon/cache:/etc/carbon
+#  volumes_from:
+#   - heramonitoring_whisper_1
 
-carboncache2:
-  image: nuancemobility/carbon
-  command: cache
-  volumes:
-   - ./carbon/cache:/etc/carbon
-  volumes_from:
-   - heramonitoring_whisper_1
+# carboncache2:
+#  image: nuancemobility/carbon
+#  command: cache
+#  volumes:
+#   - ./carbon/cache:/etc/carbon
+#  volumes_from:
+#   - heramonitoring_whisper_1
 
-graphite:
-  image: nuancemobility/graphite-web
-  volumes:
-   - ./graphite-web:/etc/graphite
-  volumes_from:
-   - heramonitoring_whisper_1
-  links:
-   - carboncache1
-   - carboncache2
+#graphite:
+#  image: nuancemobility/graphite-web
+#  volumes:
+#   - ./graphite-web:/etc/graphite
+#  volumes_from:
+#   - heramonitoring_whisper_1
+#  links:
+#   - carboncache1
+#   - carboncache2
 
 elasticsearch:
   image: elasticsearch:1.6
@@ -157,3 +157,25 @@ rabbitmq:
   image: rabbitmq:3.5
   ports:
    - "5672:5672"
+
+influxdb:
+  image: tutum/influxdb
+  links:
+  environment:
+   - ADMIN_USER="root"
+   - INFLUXDB_INIT_PWD="somepassword"
+   - PRE_CREATE_DB="polza"
+   - GRAPHITE_DB="polza"
+   - GRAPHITE_BINDING=":2003"
+   - GRAPHITE_PROTOCOL="tcp"
+   - GRAPHITE_template="tag1.tag2.tag3.measurement*"
+   - GRAPHITE_template=".resource.measurement*"
+  volumes:
+  # - influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro 
+   - influxdb/init_script.influxql:init_script.influxql:ro
+  volumes_from:
+  - heramonitoring_influxdbdata_1 
+  ports:
+   - "8083:8083"
+   - "8086:8086"
+   - "2003:2003"
